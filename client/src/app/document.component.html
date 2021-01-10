@@ -1,0 +1,81 @@
+<div style="margin-left:30%;">
+<h1>Angular 6 CRUD Example</h1>
+<h3 *ngIf="articleIdToUpdate; else create"> 
+   Update Article for Id: {{articleIdToUpdate}}
+</h3>
+<ng-template #create>
+   <h3> Create New Document </h3>
+</ng-template>
+<div>
+ <form [formGroup]="documentForm" (ngSubmit)="onDocumentFormSubmit()">
+  <table>
+    <tr>
+      <td>Enter Document Title</td>
+      <td>
+        <input formControlName="document_title">
+        <label *ngIf="documentForm.get('document_title').invalid && processValidation" [ngClass] = "'error'"> Title is required. </label>
+     </td>
+    </tr>
+    <tr>
+      <td>Enter Description</td>
+      <td>
+          <input formControlName="desc">
+	        <label *ngIf="documentForm.get('desc').invalid && processValidation" [ngClass] = "'error'"> Description is required. </label>
+      </td>
+    </tr>	
+    <tr>
+        <td>Enter Publisher</td>
+        <td>
+            <input formControlName="publisher">
+            <label *ngIf="documentForm.get('publisher').invalid && processValidation" [ngClass] = "'error'"> Publisher is required. </label>
+        </td>
+      </tr>
+    <tr><td colspan="2">
+	    <button *ngIf="!documentIdToUpdate">CREATE</button>  
+		<button *ngIf="documentIdToUpdate">UPDATE</button>  
+	    <button (click)="backToCreateDocument()" *ngIf="documentIdToUpdate">Go Back</button>  
+	</td></tr>
+  </table>
+ </form> 
+ <br/>
+ <div *ngIf="statusCode; else processing">
+   <div *ngIf="statusCode === 201" [ngClass] = "'success'">
+	    Document added successfully.
+   </div>   
+   <div *ngIf="statusCode === 409" [ngClass] = "'success'">
+        Document already exists.
+   </div>   	
+   <div *ngIf="statusCode === 200" [ngClass] = "'success'">
+        Document updated successfully.
+   </div>   	      
+   <div *ngIf="statusCode === 204" [ngClass] = "'success'">
+        Document deleted successfully.
+   </div>   	   
+   <div *ngIf="statusCode === 500" [ngClass] = "'error'">
+        Internal Server Error.
+   </div>	
+ </div>
+ <ng-template #processing>
+	<img *ngIf="requestProcessing" src="assets/images/loading.gif">
+ </ng-template>
+</div>
+<h3>Document List</h3>
+<table *ngIf="allDocuments">
+  <tr>
+    <th> Id</th> 
+    <th>Title</th>
+    <th>Publisher</th>
+    <th>Description</th>
+    <th></th>
+    <th></th>
+  </tr>
+  <tr *ngFor="let document of allDocuments" >
+    <td>{{document._id}}</td> 
+    <td>{{document.document_title}}</td> 
+    <td>{{document.desc}}</td>
+    <td>{{document.publisher}}</td>
+    <td><button type="button" (click)="loadDocumentToEdit(document._id)">Edit</button> </td> 
+    <td><button type="button" (click)="deleteDocument(document._id)">Delete</button></td>
+  </tr>
+</table>
+</div>
